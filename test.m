@@ -2,17 +2,17 @@ clc
 clear
 %% считываем csv фаил
 %сгенерированна€ функци€
-filename = 'data\pack_282_2018_04_29.csv';
+filename = 'data\pack_282_2018_04_29test.csv';
+%переписываем все зап€тые в точки в файле
+comma2point_overwrite(filename);
 delimiter = ';';
 startRow = 2;
 % For more information, see the TEXTSCAN documentation.
-formatSpec = '%q%s%s%s%d8%d8%d8';
+formatSpec = '%q%f%f%f%d8%d8%d8';
 fileID = fopen(filename,'r');
 % This call is based on the structure of the file used to generate this
 % code. If an error occurs for a different file, try regenerating the code
 % from the Import Tool.
-% dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter,...
-%     'MultipleDelimsAsOne', true,  'ReturnOnError', false);
 dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter,...
     'MultipleDelimsAsOne', true, 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 fclose(fileID);
@@ -24,9 +24,9 @@ time  = datetime(table2array(dataArray(1)));
 %более удобый формат времени duration
 timeDurationZ = duration( hour(time),minute(time),second(time));
 % дл€ распознавани€ дробныйх чисел замекн€ем за€птые на точки
-voltageZ  = str2double(strrep(table2array(dataArray(2)), ',', '.'));
-tempZ = str2double(strrep(table2array(dataArray(3)), ',', '.'));
-currentZ = str2double(strrep(table2array(dataArray(4)), ',', '.'));
+voltageZ  = table2array(dataArray(2));
+tempZ = table2array(dataArray(3));
+currentZ = table2array(dataArray(4));
 SOCZ =  uint8(table2array(dataArray(5)));
 balZ = logical(table2array(dataArray(6)));
 chgZ = logical(table2array(dataArray(7)));
