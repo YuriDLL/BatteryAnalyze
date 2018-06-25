@@ -1,9 +1,9 @@
-clc
+п»їclc
 clear
-%% считываем csv фаил
-%сгенерированная функция
+%% СЃС‡РёС‚С‹РІР°РµРј csv С„Р°РёР»
+%СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ
 filename = 'data\pack_282_2018_04_29test.csv';
-%переписываем все запятые в точки в файле
+%РїРµСЂРµРїРёСЃС‹РІР°РµРј РІСЃРµ Р·Р°РїСЏС‚С‹Рµ РІ С‚РѕС‡РєРё РІ С„Р°Р№Р»Рµ
 comma2point_overwrite(filename);
 delimiter = ';';
 startRow = 2;
@@ -17,10 +17,10 @@ dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter,...
     'MultipleDelimsAsOne', true, 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 fclose(fileID);
 clearvars filename  delimiter formatSpec fileID startRow;
-%% парсим данные
-%создание векторов из таблицы файла
+%% РїР°СЂСЃРёРј РґР°РЅРЅС‹Рµ
+%СЃРѕР·РґР°РЅРёРµ РІРµРєС‚РѕСЂРѕРІ РёР· С‚Р°Р±Р»РёС†С‹ С„Р°Р№Р»Р°
 time  = datetime(table2array(dataArray(1)));
-%более удобый формат времени duration
+%Р±РѕР»РµРµ СѓРґРѕР±С‹Р№ С„РѕСЂРјР°С‚ РІСЂРµРјРµРЅРё duration
 timeDurationZ = duration( hour(time),minute(time),second(time));
 oneSec = seconds(1);
 for i= 2:length(timeDurationZ)% = 2:length(timeDuraton)

@@ -1,9 +1,9 @@
 clc
 clear
-%% считываем csv фаил
-%сгенерированная функция
+%% СЃС‡РёС‚С‹РІР°РµРј csv С„Р°РёР»
+%СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅР°В¤ С„СѓРЅРєС†РёВ¤
 filename = 'data\pack_282_2018_04_29test.csv';
-%переписываем все запятые в точки в файле
+%РїРµСЂРµРїРёСЃС‹РІР°РµРј РІСЃРµ Р·Р°РїВ¤С‚С‹Рµ РІ С‚РѕС‡РєРё РІ С„Р°Р№Р»Рµ
 comma2point_overwrite(filename);
 delimiter = ';';
 startRow = 2;
@@ -17,23 +17,23 @@ dataArray = textscan(fileID, formatSpec, 'Delimiter', delimiter,...
     'MultipleDelimsAsOne', true, 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
 fclose(fileID);
 clearvars filename  delimiter formatSpec fileID startRow;
-%% парсим данные
-%создание векторов из таблицы файла
+%% РїР°СЂСЃРёРј РґР°РЅРЅС‹Рµ
+%СЃРѕР·РґР°РЅРёРµ РІРµРєС‚РѕСЂРѕРІ РёР· С‚Р°Р±Р»РёС†С‹ С„Р°Р№Р»Р°
 
 time  = datetime(table2array(dataArray(1)));
-%более удобый формат времени duration
+%Р±РѕР»РµРµ СѓРґРѕР±С‹Р№ С„РѕСЂРјР°С‚ РІСЂРµРјРµРЅРё duration
 timeDurationZ = duration( hour(time),minute(time),second(time));
-% для распознавания дробныйх чисел замекняем заяптые на точки
+% РґР»В¤ СЂР°СЃРїРѕР·РЅР°РІР°РЅРёВ¤ РґСЂРѕР±РЅС‹Р№С… С‡РёСЃРµР» Р·Р°РјРµРєРЅВ¤РµРј Р·Р°В¤РїС‚С‹Рµ РЅР° С‚РѕС‡РєРё
 voltageZ  = table2array(dataArray(2));
 tempZ = table2array(dataArray(3));
 currentZ = table2array(dataArray(4));
 SOCZ =  uint8(table2array(dataArray(5)));
 balZ = logical(table2array(dataArray(6)));
 chgZ = logical(table2array(dataArray(7)));
-%восстановление сжатых данных
-%размер массива увеличен из за битых значений( значений с одним временем)
+%РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЃР¶Р°С‚С‹С… РґР°РЅРЅС‹С…
+%СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР° СѓРІРµР»РёС‡РµРЅ РёР· Р·Р° Р±РёС‚С‹С… Р·РЅР°С‡РµРЅРёР№( Р·РЅР°С‡РµРЅРёР№ СЃ РѕРґРЅРёРј РІСЂРµРјРµРЅРµРј)
 zapas = 20;
-%массивы для разжатых данных
+%РјР°СЃСЃРёРІС‹ РґР»В¤ СЂР°Р·Р¶Р°С‚С‹С… РґР°РЅРЅС‹С…
 timeDuration = duration( 0,0,0:(86400+zapas-1))';
 voltage = zeros (86400+zapas ,1);
 temp = zeros (86400+zapas ,1);
@@ -44,7 +44,7 @@ chg = false (86400+zapas ,1);
 
 i=2;%
 j = 2;
-%обработка первых элементов
+%РѕР±СЂР°Р±РѕС‚РєР° РїРµСЂРІС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 voltage(1) = voltageZ(1);
 temp(1) = tempZ(1);
 current(1) = currentZ(1);
@@ -56,19 +56,19 @@ oneSec = seconds(1);
 for i= 2:length(timeDurationZ)
     deltaTime = timeDurationZ(i)-timeDurationZ(i-1);
     if (deltaTime > oneSec)
-        %кол-во секунд
+        %РєРѕР»-РІРѕ СЃРµРєСѓРЅРґ
         deltaSec = seconds(deltaTime);
-        %напряжение
-        %массив для вставки
+        %РЅР°РїСЂВ¤Р¶РµРЅРёРµ
+        %РјР°СЃСЃРёРІ РґР»В¤ РІСЃС‚Р°РІРєРё
         bufVoltage = zeros(deltaSec,1)+voltageZ(i-1);
         bufVoltage(deltaSec) = voltageZ(i);
-        %перенос массива
+        %РїРµСЂРµРЅРѕСЃ РјР°СЃСЃРёРІР°
         voltage(j:j+deltaSec-1) = bufVoltage;
-        %температура
+        %С‚РµРјРїРµСЂР°С‚СѓСЂР°
         buftemp = zeros(deltaSec,1)+tempZ(i-1);
         buftemp(deltaSec) = tempZ(i);
         temp(j:j+deltaSec-1) = buftemp;
-        %ток
+        %С‚РѕРє
         bufCurrent = zeros(deltaSec,1)+currentZ(i-1);
         bufCurrent(deltaSec) = currentZ(i);
         current(j:j+deltaSec-1) = bufCurrent;
@@ -96,7 +96,7 @@ for i= 2:length(timeDurationZ)
         j=j+1;
     end
 end
-%% визуализация
+%% РІРёР·СѓР°Р»РёР·Р°С†РёВ¤
 hAxes1=subplot(2,1,1);
 yyaxis left
 plot (timeDuration,voltage,'DurationTickFormat','hh:mm:ss');
@@ -106,7 +106,7 @@ hAxes2 = subplot(2,1,2);
 yyaxis left
 plot (timeDuration,chg,'DurationTickFormat','hh:mm:ss');
 ylim([0 2]);
-%матлаб делает их одноцветными и разобрать где что невозможно
+%РјР°С‚Р»Р°Р± РґРµР»Р°РµС‚ РёС… РѕРґРЅРѕС†РІРµС‚РЅС‹РјРё Рё СЂР°Р·РѕР±СЂР°С‚СЊ РіРґРµ С‡С‚Рѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 hold on
 plot (timeDuration,bal,'DurationTickFormat','hh:mm:ss');%
 hold off
@@ -114,26 +114,26 @@ yyaxis right
 plot (timeDuration,SOC,'DurationTickFormat','hh:mm:ss');
 linkaxes([hAxes1,hAxes2], 'x');
 xlim ( [duration(0,0,0) duration(24,0,0)]);
-%% Определение сопротивления
-%нахождение интервалов нулевого тока
-Izero = 5; % погрешность нулевого тока
-Tzero = duration ( 0,20,0); % продолжительность нулевого тока
+%% СњРїСЂРµРґРµР»РµРЅРёРµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёВ¤
+%РЅР°С…РѕР¶РґРµРЅРёРµ РёРЅС‚РµСЂРІР°Р»РѕРІ РЅСѓР»РµРІРѕРіРѕ С‚РѕРєР°
+Izero = 5; % РїРѕРіСЂРµС€РЅРѕСЃС‚СЊ РЅСѓР»РµРІРѕРіРѕ С‚РѕРєР°
+Tzero = duration ( 0,20,0); % РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ РЅСѓР»РµРІРѕРіРѕ С‚РѕРєР°
 %%%%
-%минимальный ток нагрузки для замера
+%РјРёРЅРёРјР°Р»СЊРЅС‹Р№ С‚РѕРє РЅР°РіСЂСѓР·РєРё РґР»В¤ Р·Р°РјРµСЂР°
 Imin = 50;
-%максимальное среднеквадратичное отклонение для замера в %
+%РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ СЃСЂРµРґРЅРµРєРІР°РґСЂР°С‚РёС‡РЅРѕРµ РѕС‚РєР»РѕРЅРµРЅРёРµ РґР»В¤ Р·Р°РјРµСЂР° РІ %
 devmax = 10;
-%время для нарастания тока после паузы
+%РІСЂРµРјВ¤ РґР»В¤ РЅР°СЂР°СЃС‚Р°РЅРёВ¤ С‚РѕРєР° РїРѕСЃР»Рµ РїР°СѓР·С‹
 TRaise = duration ( 0,1,0);
-%время установления напряжения
+%РІСЂРµРјВ¤ СѓСЃС‚Р°РЅРѕРІР»РµРЅРёВ¤ РЅР°РїСЂВ¤Р¶РµРЅРёВ¤
 TRelax = duration (0,5,0);
 
 flagZeroCur =false;
 timeStartZero = duration (0,0,0);
 %[Ts Td]
-%Ts - время начала паузы
-%Td - продолжительность паузы
-zeroPer = duration(0,0,1:2);%массив пауз [Ts1 Td1; Ts2 Td2; ....]
+%Ts - РІСЂРµРјВ¤ РЅР°С‡Р°Р»Р° РїР°СѓР·С‹
+%Td - РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ РїР°СѓР·С‹
+zeroPer = duration(0,0,1:2);%РјР°СЃСЃРёРІ РїР°СѓР· [Ts1 Td1; Ts2 Td2; ....]
 for i=1: length(timeDuration)
     if (abs(current(i))<Izero)
         if(~flagZeroCur)
@@ -150,7 +150,7 @@ for i=1: length(timeDuration)
         end
     end
 end
-%убираем первый элемент
+%СѓР±РёСЂР°РµРј РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚
 zeroPer = zeroPer(2:end,:);
 R = 0;
 for i = 1: size(zeroPer,1)
@@ -162,10 +162,10 @@ for i = 1: size(zeroPer,1)
             - voltage(endRelax));
         deltaI = abs(mr);
         R = [R deltaV/deltaI];
-        %отображение результатов
+        %РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
         fprintf('Time=%s, current=%2.1f, deltaV=%f, R=%f t =%f \n',...
             char(timeDuration(startRelax)),mr,deltaV,R(end),temp(startRelax))
     end
 end
-%убираем первый элемент
+%СѓР±РёСЂР°РµРј РїРµСЂРІС‹Р№ СЌР»РµРјРµРЅС‚
 R = R(2:end);
