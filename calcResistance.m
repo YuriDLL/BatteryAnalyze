@@ -43,8 +43,8 @@ for i = 1: size(zeroPer,1)
     endRelax = startRelax+seconds(TRelax)-1;
     [mr dev] = deviation(data.current(startRelax:endRelax));
     if (abs(mr)>Imin && dev < devmax)
-        deltaV =abs(data.current(seconds(zeroPer(i,1))+seconds(zeroPer(i,2))-2)...
-            - data.current(endRelax));
+        deltaV =abs(data.voltage(seconds(zeroPer(i,1))+seconds(zeroPer(i,2))-2)...
+            - data.voltage(endRelax));
         deltaI = abs(mr);
         R = [R deltaV/deltaI];
         %отображение результатов
