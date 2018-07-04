@@ -1,13 +1,15 @@
-function [data]=takeVectors(filename)
+function [data]=takeVectors(fileNameLoad,fileNameSave)
+%%fileNameLoad - имя CSV файла для считывания
+%fileNameSave - имя mat файла для записи
 %% считываем csv фаил
 %переписываем все зап¤тые в точки в файле
-comma2point_overwrite(filename);
+comma2point_overwrite(fileNameLoad);
 delimiter = ';';
 startRow = 2;
 %сгенерированная функци¤
 % For more information, see the TEXTSCAN documentation.
 formatSpec = '%q%f%f%f%d8%d8%d8';
-fileID = fopen(filename,'r');
+fileID = fopen(fileNameLoad,'r');
 % This call is based on the structure of the file used to generate this
 % code. If an error occurs for a different file, try regenerating the code
 % from the Import Tool.
@@ -93,5 +95,8 @@ for i= 2:length(timeDurationZ)
         data.chg(j) = chgZ(i);
         j=j+1;
     end
+end
+if (nargin ==2)
+    save(fileNameSave,'data');
 end
 end
